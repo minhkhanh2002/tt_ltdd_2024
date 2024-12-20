@@ -20,62 +20,83 @@ final _formkey= GlobalKey<FormState>();
 TextEditingController useremailcontroller= new TextEditingController();
 TextEditingController userpasswordcontroller= new TextEditingController();
 
-userLogin() async {
-  try {
-    // Đăng nhập với email và mật khẩu
-    UserCredential userCredential = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
+// userLogin() async {
+//   try {
+//     // Đăng nhập với email và mật khẩu
+//     UserCredential userCredential = await FirebaseAuth.instance
+//         .signInWithEmailAndPassword(email: email, password: password);
+//
+//     // Truy xuất thông tin người dùng từ Firestore
+//     // DocumentSnapshot userDoc = await FirebaseFirestore.instance
+//     //     .collection("users")
+//     //     .doc(userCredential.user!.uid)
+//     //     .get();
+//
+//     DocumentSnapshot userDoc = await FirebaseFirestore.instance
+//         .collection("users")
+//         .doc(userCredential.user!.uid)
+//         .get();
+//
+//     if (userDoc.exists) {
+//       // Người dùng tồn tại, xử lý logic sau khi đăng nhập
+//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//         content: Text(
+//           "Đăng nhập thành công!",
+//           style: TextStyle(fontSize: 18, color: Colors.black),
+//         ),
+//       ));
+//       // Chuyển đến màn hình chính hoặc dashboard
+//       Navigator.pushReplacement(context,
+//           MaterialPageRoute(builder: (context) =>  BottomNav())); // Thay BottomNav bằng màn hình chính của bạn
+//     } else {
+//       // Không tìm thấy người dùng trong Firestore
+//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//         content: Text(
+//           "Tài khoản không tồn tại trong hệ thống!",
+//           style: TextStyle(fontSize: 18, color: Colors.white),
+//         ),
+//       ));
+//     }
+//   } on FirebaseAuthException catch (e) {
+//     // Xử lý lỗi từ FirebaseAuth
+//     if (e.code == 'user-not-found') {
+//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//         content: Text(
+//           "Không tìm thấy người dùng!",
+//           style: TextStyle(fontSize: 18, color: Colors.black),
+//         ),
+//       ));
+//     } else if (e.code == 'wrong-password') {
+//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//         content: Text(
+//           "Sai mật khẩu!",
+//           style: TextStyle(fontSize: 18, color: Colors.black),
+//         ),
+//       ));
+//     }
+//   }
+// }
 
-    // Truy xuất thông tin người dùng từ Firestore
-    // DocumentSnapshot userDoc = await FirebaseFirestore.instance
-    //     .collection("users")
-    //     .doc(userCredential.user!.uid)
-    //     .get();
+  userLogin() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
 
-    DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(userCredential.user!.uid)
-        .get();
-
-    if (userDoc.exists) {
-      // Người dùng tồn tại, xử lý logic sau khi đăng nhập
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Đăng nhập thành công!",
-          style: TextStyle(fontSize: 18, color: Colors.black),
-        ),
-      ));
-      // Chuyển đến màn hình chính hoặc dashboard
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) =>  BottomNav())); // Thay BottomNav bằng màn hình chính của bạn
-    } else {
-      // Không tìm thấy người dùng trong Firestore
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Tài khoản không tồn tại trong hệ thống!",
-          style: TextStyle(fontSize: 18, color: Colors.white),
-        ),
-      ));
-    }
-  } on FirebaseAuthException catch (e) {
-    // Xử lý lỗi từ FirebaseAuth
-    if (e.code == 'user-not-found') {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Không tìm thấy người dùng!",
-          style: TextStyle(fontSize: 18, color: Colors.black),
-        ),
-      ));
-    } else if (e.code == 'wrong-password') {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Sai mật khẩu!",
-          style: TextStyle(fontSize: 18, color: Colors.black),
-        ),
-      ));
+    }on FirebaseAuthException catch (e){
+      if (e.code=='user-not-found'){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "Không tìm thấy User",
+              style: TextStyle(fontSize: 18.0, color: Colors.black),
+            )));
+      } else if (e.code=='wrong-password'){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "Mật khẩu sai",
+              style: TextStyle(fontSize: 18.0, color: Colors.black),
+            )));
+      }
     }
   }
-}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
