@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
@@ -27,22 +28,75 @@ class _SignUpState extends State<SignUp> {
 
   final _formkey = GlobalKey<FormState>();
 
+  // registration() async {
+  //   if (password != null) {
+  //     try {
+  //
+  //       UserCredential userCredential = await FirebaseAuth.instance
+  //           .createUserWithEmailAndPassword(email: email, password: password);
+  //
+  //       ScaffoldMessenger.of(context).showSnackBar((SnackBar(
+  //           backgroundColor: Colors.redAccent,
+  //           content: Text(
+  //             "Registered Successfully",
+  //             style: TextStyle(fontSize: 20.0),
+  //           ))));
+  //           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>BottomNav()));
+  //
+  //     }on FirebaseException catch(e) {
+  //       if (e.code == 'weak-password') {
+  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             backgroundColor: Colors.orangeAccent,
+  //             content: Text(
+  //               "Password Provided is too Weak",
+  //               style: TextStyle(fontSize: 18.0),
+  //             )));
+  //       } else if (e.code == "email-already-in-use") {
+  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             backgroundColor: Colors.orangeAccent,
+  //             content: Text(
+  //               "Account Already exsists",
+  //               style: TextStyle(fontSize: 18.0),
+  //             )));
+  //       }
+  //     }
+  //   }
+  // }
   registration() async {
-    if (password != null) {
+    if (_formkey.currentState!.validate()) {
       try {
-
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 
-        ScaffoldMessenger.of(context).showSnackBar((SnackBar(
-            backgroundColor: Colors.redAccent,
+        // Thêm thông tin người dùng vào Firestore
+        // await FirebaseFirestore.instance
+        //     .collection("users") // Tên collection là "users"
+        //     .doc("f5l8Et14R8oXz3lIyS4T") // Sử dụng documentID cố định
+        //     .set({
+        //   'name': name,
+        //   'email': email,
+        //   'uid': userCredential.user!.uid,
+        //   'created_at': DateTime.now(),
+        // });
+
+        await FirebaseFirestore.instance
+            .collection("users") // Tên collection là "users"
+            .add({
+          'name': name,
+          'email': email,
+          'uid': userCredential.user!.uid,
+          'created_at': DateTime.now(),
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.green,
             content: Text(
               "Registered Successfully",
               style: TextStyle(fontSize: 20.0),
-            ))));
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>BottomNav()));
-
-      }on FirebaseException catch(e) {
+            )));
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => BottomNav()));
+      } on FirebaseException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: Colors.orangeAccent,
@@ -54,7 +108,7 @@ class _SignUpState extends State<SignUp> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: Colors.orangeAccent,
               content: Text(
-                "Account Already exsists",
+                "Account Already Exists",
                 style: TextStyle(fontSize: 18.0),
               )));
         }
