@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:my_flutter_app/pages/forgotpassword.dart';
 import 'package:my_flutter_app/pages/signup.dart';
 import 'package:my_flutter_app/widget/widget_support.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -195,10 +196,15 @@ TextEditingController userpasswordcontroller= new TextEditingController();
                             SizedBox(
                               height: 20,
                             ),
-                            Container(
-                              alignment: Alignment.topRight,
-                              child: Text("Quên mật khẩu?",
-                                  style: AppWidget.semiBoldTextFieldStyle()),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>ForgotPassword()));
+                              },
+                              child: Container(
+                                alignment: Alignment.topRight,
+                                child: Text("Quên mật khẩu?",
+                                    style: AppWidget.semiBoldTextFieldStyle()),
+                              ),
                             ),
                             SizedBox(
                               height: 80,
