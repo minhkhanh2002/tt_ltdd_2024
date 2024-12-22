@@ -46,4 +46,5 @@ dependencies {
     // Add the dependency for the Google services Gradle plugin
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("androidx.fragment:fragment:1.5.7")
 }
