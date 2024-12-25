@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:my_flutter_app/service/database.dart';
+import 'package:my_flutter_app/service/shared_pref.dart';
 import 'package:my_flutter_app/widget/widget_support.dart';
 import 'package:my_flutter_app/widget/app_constant.dart';
+
 class Wallet extends StatefulWidget {
   const Wallet({super.key});
 
@@ -13,11 +16,40 @@ class Wallet extends StatefulWidget {
 }
 
 class _WalletState extends State<Wallet> {
+
+  String? wallet,id;
+  int? add;
+
+  getTheSharedPref() async{
+    wallet = await SharedPreferenceHelper().getUserWallet();
+    id =await SharedPreferenceHelper().getUserId();
+    setState(() {
+
+    });
+  }
+
+  onTheLoad() async{
+    await getTheSharedPref();
+    setState(() {
+
+    });
+
+  }
+
+  @override
+  void initState(){
+    onTheLoad();
+    super.initState();
+  }
+
   Map<String, dynamic>? paymentIntent;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body:
+      wallet == null? CircularProgressIndicator():
+      Container(
         margin: EdgeInsets.only(top: 50),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +72,7 @@ class _WalletState extends State<Wallet> {
                   children: [
                     Text("Số dư của bạn", style: AppWidget.LightTextFieldStyle(),),
                     SizedBox(height: 5,),
-                    Text("100000"+" VND", style: AppWidget.boldTextFieldStyle(),),
+                    Text(wallet! +" VND", style: AppWidget.boldTextFieldStyle(),),
                   ],),
               ],),),
             SizedBox(height: 20,),
@@ -54,7 +86,7 @@ class _WalletState extends State<Wallet> {
               children: [
               GestureDetector(
                 onTap: (){
-                  makePayment('10000');
+                  makePayment('50000');
                 },
                 child: Container(
 
@@ -62,29 +94,39 @@ class _WalletState extends State<Wallet> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xFFE9E2E2)), borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Text("10000"+ " VND", style: AppWidget.semiBoldTextFieldStyle(),),
+                  child: Text("50,000"+ " VND", style: AppWidget.semiBoldTextFieldStyle(),),
                 ),
               ),
-              Container(
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xFFE9E2E2)), borderRadius: BorderRadius.circular(5),
+              GestureDetector(
+                onTap: (){
+                  makePayment('100000');
+                },
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color(0xFFE9E2E2)), borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text("100,000"+ " VND", style: AppWidget.semiBoldTextFieldStyle(),),
                 ),
-                child: Text("50000"+ " VND", style: AppWidget.semiBoldTextFieldStyle(),),
               ),
-              Container(
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xFFE9E2E2)), borderRadius: BorderRadius.circular(5),
+              GestureDetector(
+                onTap: (){
+                  makePayment('200000');
+                },
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color(0xFFE9E2E2)), borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text("200,000"+ " VND", style: AppWidget.semiBoldTextFieldStyle(),),
                 ),
-                child: Text("100000"+ " VND", style: AppWidget.semiBoldTextFieldStyle(),),
               ),
               // Container(
               //   padding: EdgeInsets.all(5),
               //   decoration: BoxDecoration(
               //     border: Border.all(color: Color(0xFFE9E2E2)), borderRadius: BorderRadius.circular(5),
               //   ),
-              //   child: Text("200000"+ " VND", style: AppWidget.semiBoldTextFieldStyle(),),
+              //   child: Text("500,000"+ " VND", style: AppWidget.semiBoldTextFieldStyle(),),
               // ),
             ],),
             SizedBox(height: 30,),
@@ -120,15 +162,30 @@ class _WalletState extends State<Wallet> {
   displayPaymentSheet(String amount) async {
     try{
       await Stripe.instance.presentPaymentSheet().then((value) async {
-        showDialog(context: context, builder: (_) =>
-            AlertDialog(
-              content: Column(children: [
-                Row(children: [
-                  Icon(Icons.check_circle, color: Colors.green,),
-                  Text("Thanh toán thành công")
-                ],)
-              ],),
+        add= int.parse(wallet!)+ int.parse(amount);
+        await SharedPreferenceHelper().saveUserWallet(add.toString());
+        await DatabaseMethods().UpdateUserWallet(id!,add.toString());
+
+        showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                      ),
+                      Text("Payment Successfull"),
+                    ],
+                  ),
+                ],
+              ),
             ));
+        await getTheSharedPref();
+
 
         paymentIntent = null;
       }).onError((error, stackTrace){
@@ -169,7 +226,7 @@ class _WalletState extends State<Wallet> {
   }
 
   calculateAmount(String amount){
-    final calculatedAmount = (int.parse(amount)*100);
+    final calculatedAmount = (int.parse(amount));
     return calculatedAmount.toString();
   }
 }

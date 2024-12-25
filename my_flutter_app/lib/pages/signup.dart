@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:random_string/random_string.dart';
+import 'package:my_flutter_app/service/database.dart';
+import 'package:my_flutter_app/service/shared_pref.dart';
+import 'package:random_string/random_string.dart';
 
 import '../widget/widget_support.dart';
 import 'bottomnav.dart';
@@ -28,75 +29,38 @@ class _SignUpState extends State<SignUp> {
 
   final _formkey = GlobalKey<FormState>();
 
-  // registration() async {
-  //   if (password != null) {
-  //     try {
-  //
-  //       UserCredential userCredential = await FirebaseAuth.instance
-  //           .createUserWithEmailAndPassword(email: email, password: password);
-  //
-  //       ScaffoldMessenger.of(context).showSnackBar((SnackBar(
-  //           backgroundColor: Colors.redAccent,
-  //           content: Text(
-  //             "Registered Successfully",
-  //             style: TextStyle(fontSize: 20.0),
-  //           ))));
-  //           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>BottomNav()));
-  //
-  //     }on FirebaseException catch(e) {
-  //       if (e.code == 'weak-password') {
-  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //             backgroundColor: Colors.orangeAccent,
-  //             content: Text(
-  //               "Password Provided is too Weak",
-  //               style: TextStyle(fontSize: 18.0),
-  //             )));
-  //       } else if (e.code == "email-already-in-use") {
-  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //             backgroundColor: Colors.orangeAccent,
-  //             content: Text(
-  //               "Account Already exsists",
-  //               style: TextStyle(fontSize: 18.0),
-  //             )));
-  //       }
-  //     }
-  //   }
-  // }
+  //ver1
   registration() async {
-    if (_formkey.currentState!.validate()) {
+    if (password != null) {
       try {
+
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 
-        // Thêm thông tin người dùng vào Firestore
-        // await FirebaseFirestore.instance
-        //     .collection("users") // Tên collection là "users"
-        //     .doc("f5l8Et14R8oXz3lIyS4T") // Sử dụng documentID cố định
-        //     .set({
-        //   'name': name,
-        //   'email': email,
-        //   'uid': userCredential.user!.uid,
-        //   'created_at': DateTime.now(),
-        // });
-
-        await FirebaseFirestore.instance
-            .collection("users") // Tên collection là "users"
-            .add({
-          'name': name,
-          'email': email,
-          'uid': userCredential.user!.uid,
-          'created_at': DateTime.now(),
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar((SnackBar(
             backgroundColor: Colors.green,
             content: Text(
-              "Registered Successfully",
+              "Đăng ký thành công.",
               style: TextStyle(fontSize: 20.0),
-            )));
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => BottomNav()));
-      } on FirebaseException catch (e) {
+            ))));
+        String Id= randomAlphaNumeric(10);
+        Map<String, dynamic> addUserInfo={
+          "Name": namecontroller.text,
+          "Email": mailcontroller.text,
+          "Wallet": "0",
+          "Id": Id,
+        };
+        await DatabaseMethods().addUserDetail(addUserInfo, Id);
+        await SharedPreferenceHelper().saveUserName(namecontroller.text);
+        await SharedPreferenceHelper().saveUserEmail(mailcontroller.text);
+        await SharedPreferenceHelper().saveUserWallet('0');
+        await SharedPreferenceHelper().saveUserId(Id);
+
+
+
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>BottomNav()));
+
+      }on FirebaseException catch(e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: Colors.orangeAccent,
@@ -108,13 +72,68 @@ class _SignUpState extends State<SignUp> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: Colors.orangeAccent,
               content: Text(
-                "Account Already Exists",
+                "Account Already exsists",
                 style: TextStyle(fontSize: 18.0),
               )));
         }
       }
     }
   }
+
+  //ver2
+  // registration() async {
+  //   if (_formkey.currentState!.validate()) {
+  //     try {
+  //       UserCredential userCredential = await FirebaseAuth.instance
+  //           .createUserWithEmailAndPassword(email: email, password: password);
+  //
+  //       // Thêm thông tin người dùng vào Firestore
+  //       // await FirebaseFirestore.instance
+  //       //     .collection("users") // Tên collection là "users"
+  //       //     .doc("f5l8Et14R8oXz3lIyS4T") // Sử dụng documentID cố định
+  //       //     .set({
+  //       //   'name': name,
+  //       //   'email': email,
+  //       //   'uid': userCredential.user!.uid,
+  //       //   'created_at': DateTime.now(),
+  //       // });
+  //
+  //       await FirebaseFirestore.instance
+  //           .collection("users") // Tên collection là "users"
+  //           .add({
+  //         'name': name,
+  //         'email': email,
+  //         'uid': userCredential.user!.uid,
+  //         'created_at': DateTime.now(),
+  //       });
+  //
+  //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //           backgroundColor: Colors.green,
+  //           content: Text(
+  //             "Registered Successfully",
+  //             style: TextStyle(fontSize: 20.0),
+  //           )));
+  //       Navigator.pushReplacement(
+  //           context, MaterialPageRoute(builder: (context) => BottomNav()));
+  //     } on FirebaseException catch (e) {
+  //       if (e.code == 'weak-password') {
+  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             backgroundColor: Colors.orangeAccent,
+  //             content: Text(
+  //               "Password Provided is too Weak",
+  //               style: TextStyle(fontSize: 18.0),
+  //             )));
+  //       } else if (e.code == "email-already-in-use") {
+  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             backgroundColor: Colors.orangeAccent,
+  //             content: Text(
+  //               "Account Already Exists",
+  //               style: TextStyle(fontSize: 18.0),
+  //             )));
+  //       }
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
