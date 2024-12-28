@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'add_food.dart';
 
 class HomeAdmin extends StatelessWidget {
+  final String username = 'Admin';  // Tên người dùng, có thể thay thế bằng dữ liệu thực tế
+
   const HomeAdmin({super.key});
 
   @override
@@ -11,6 +13,40 @@ class HomeAdmin extends StatelessWidget {
         title: const Text("Admin Dashboard"),
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
+        actions: [
+          // Hiển thị nút hình tròn và menu popup
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'logout') {
+                  // Xử lý đăng xuất
+                  Navigator.pushReplacementNamed(context, '/login');
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem<String>(
+                  value: 'logout',
+                  child: Row(
+                    children: const [
+                      Icon(Icons.exit_to_app, color: Colors.black),
+                      SizedBox(width: 10),
+                      Text('Log out', style: TextStyle(fontSize: 16.0)),
+                    ],
+                  ),
+                ),
+              ],
+              child: CircleAvatar(
+                radius: 20,  // Kích thước của vòng tròn
+                backgroundColor: Colors.deepPurple,
+                child: const Icon(
+                  Icons.person,  // Biểu tượng người dùng
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -18,7 +54,7 @@ class HomeAdmin extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Welcome, Admin!",
+              "Welcome, Admin!",  // Chào mừng người dùng
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -29,6 +65,7 @@ class HomeAdmin extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
+                  // Mục Add Food Items
                   ListTile(
                     onTap: () {
                       Navigator.push(
@@ -56,6 +93,7 @@ class HomeAdmin extends StatelessWidget {
                     ),
                     tileColor: Colors.grey[200],
                   ),
+                  // Bạn có thể thêm nhiều mục khác ở đây nếu cần
                 ],
               ),
             ),
