@@ -7,6 +7,8 @@ import 'package:my_flutter_app/pages/login.dart';
 import 'package:my_flutter_app/pages/onboard.dart';
 import 'package:my_flutter_app/widget/app_constant.dart';
 
+import 'admin/home_admin.dart';
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey = publishableKey;
@@ -42,7 +44,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         //home: const BottomNav());A
-        home: Onboard());
+        home: const HomeAdmin());
   }
 }
 
