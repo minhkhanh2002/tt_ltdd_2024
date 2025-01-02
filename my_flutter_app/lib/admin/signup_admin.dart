@@ -1,19 +1,59 @@
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore (nếu cần lấy thêm thông tin khác về admin)
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:my_flutter_app/admin/home_admin.dart';
+import 'package:my_flutter_app/admin/admin_login.dart'; // Import trang đăng nhập admin
 
-class AdminLogin extends StatefulWidget {
-  const AdminLogin({super.key});
-
+class AdminRegister extends StatefulWidget {
   @override
-  State<AdminLogin> createState() => _AdminLoginState();
+  _AdminRegisterState createState() => _AdminRegisterState();
 }
 
-class _AdminLoginState extends State<AdminLogin> {
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  TextEditingController usernamecontroller = TextEditingController();
-  TextEditingController userpasswordcontroller = TextEditingController();
+class _AdminRegisterState extends State<AdminRegister> {
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _adminCodeController = TextEditingController();
+
+  // Code admin để kiểm tra quyền admin
+  final String adminCode = "admin123"; // Mã xác nhận admin
+
+  // Hàm đăng ký người dùng và cấp quyền admin
+  Future<void> registerAdmin() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+    String adminCodeInput = _adminCodeController.text.trim();
+
+    if (_formKey.currentState!.validate()) {
+      try {
+        // Đăng ký người dùng mới với Firebase Authentication
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password);
+
+        // Nếu nhập mã admin đúng, cấp quyền admin
+        if (adminCodeInput == adminCode) {
+          // Thêm thông tin admin vào Firestore
+          await FirebaseFirestore.instance.collection('Admin').doc(userCredential.user?.uid).set({
+            'isAdmin': true,  // Đánh dấu người dùng là admin
+            'email': email,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Admin account created!")));
+
+          // Sau khi đăng ký thành công, chuyển về trang đăng nhập
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const AdminLogin())  // Chuyển sang trang đăng nhập
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Incorrect admin code")));
+        }
+
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +78,11 @@ class _AdminLoginState extends State<AdminLogin> {
               ),
             ),
           ),
-          // Login form
+          // Register form
           Container(
             margin: const EdgeInsets.only(left: 30.0, right: 30.0, top: 60.0),
             child: Form(
-              key: _formkey,
+              key: _formKey,
               child: Column(
                 children: [
                   const Text(
@@ -66,14 +106,14 @@ class _AdminLoginState extends State<AdminLogin> {
                       child: Column(
                         children: [
                           const SizedBox(height: 50.0),
-                          // Username TextField
+                          // Email TextField
                           _buildTextField(
-                            controller: usernamecontroller,
-                            hintText: "Username",
+                            controller: _emailController,
+                            hintText: "Email",
                             obscureText: false,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please Enter Username';
+                                return 'Please Enter Email';
                               }
                               return null;
                             },
@@ -81,7 +121,7 @@ class _AdminLoginState extends State<AdminLogin> {
                           const SizedBox(height: 40.0),
                           // Password TextField
                           _buildTextField(
-                            controller: userpasswordcontroller,
+                            controller: _passwordController,
                             hintText: "Password",
                             obscureText: true,
                             validator: (value) {
@@ -92,11 +132,24 @@ class _AdminLoginState extends State<AdminLogin> {
                             },
                           ),
                           const SizedBox(height: 40.0),
-                          // Login Button
+                          // Admin Code TextField
+                          _buildTextField(
+                            controller: _adminCodeController,
+                            hintText: "Admin Code",
+                            obscureText: false,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please Enter Admin Code';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 40.0),
+                          // Register Button
                           GestureDetector(
                             onTap: () {
-                              if (_formkey.currentState?.validate() ?? false) {
-                                LoginAdmin();
+                              if (_formKey.currentState?.validate() ?? false) {
+                                registerAdmin();
                               }
                             },
                             child: Container(
@@ -109,7 +162,7 @@ class _AdminLoginState extends State<AdminLogin> {
                               ),
                               child: const Center(
                                 child: Text(
-                                  "LogIn",
+                                  "Register",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 20.0,
@@ -159,54 +212,5 @@ class _AdminLoginState extends State<AdminLogin> {
         ),
       ),
     );
-  }
-
-  // Login admin function using Firebase Authentication
-  void LoginAdmin() async {
-    try {
-      // Attempt to sign in using Firebase Authentication
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-        email: usernamecontroller.text.trim(),
-        password: userpasswordcontroller.text.trim(),
-      );
-
-      // Check if the user is an admin by querying Firestore (optional)
-      DocumentSnapshot adminDoc = await FirebaseFirestore.instance
-          .collection('Admin')
-          .doc(userCredential.user?.uid) // Assuming user id is stored in Firestore
-          .get();
-
-      if (adminDoc.exists) {
-        // Admin is authenticated and exists in Firestore
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const HomeAdmin()));
-      } else {
-        // User exists but is not an admin
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('You do not have admin rights'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      // Handle authentication errors
-      String errorMessage = '';
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Wrong password provided.';
-      } else {
-        errorMessage = e.message ?? 'An error occurred.';
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
   }
 }

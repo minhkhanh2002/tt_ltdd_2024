@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:flutter/services.dart';
 
 class AddFood extends StatefulWidget {
@@ -35,14 +35,46 @@ class _AddFoodState extends State<AddFood> {
     }
   }
 
-  void addItem() {
+  Future<void> uploadImage() async {
+    if (selectedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please select an image first.")),
+      );
+      return;
+    }
+
+    try {
+      // Lấy đường dẫn ảnh tạm thời từ File
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference storageRef = FirebaseStorage.instance.ref().child('food_images/$fileName');
+
+      // Tải ảnh lên Firebase Storage
+      UploadTask uploadTask = storageRef.putFile(selectedImage!);
+      TaskSnapshot snapshot = await uploadTask;
+
+      // Lấy URL của ảnh vừa tải lên
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+
+      // Sau khi tải ảnh lên thành công, bạn có thể sử dụng URL này để lưu vào cơ sở dữ liệu
+      print("Uploaded image URL: $downloadUrl");
+
+      // Tiến hành thêm thông tin món ăn với URL ảnh
+      addItem(downloadUrl);
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error uploading image: $e")),
+      );
+    }
+  }
+
+  void addItem(String imageUrl) {
     if (nameController.text.isEmpty ||
         priceController.text.isEmpty ||
         detailController.text.isEmpty ||
-        selectedImage == null ||
         selectedCategory == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please fill in all fields and upload an image.")),
+        SnackBar(content: Text("Please fill in all fields.")),
       );
       return;
     }
@@ -51,15 +83,14 @@ class _AddFoodState extends State<AddFood> {
     final itemPrice = priceController.text;
     final itemDetails = detailController.text;
 
-    // TODO: Replace this print with actual upload logic
-    print("Item Added: $itemName, $itemPrice, $itemDetails, $selectedCategory");
+    // TODO: Replace this print with actual item saving logic
+    print("Item Added: $itemName, $itemPrice, $itemDetails, $selectedCategory, $imageUrl");
 
     // Reset form
     setState(() {
       nameController.clear();
       priceController.clear();
       detailController.clear();
-      selectedImage = null;
       selectedCategory = null;
     });
 
@@ -132,7 +163,7 @@ class _AddFoodState extends State<AddFood> {
               _buildDropdown(),
               SizedBox(height: 30.0),
               GestureDetector(
-                onTap: addItem,
+                onTap: uploadImage,
                 child: Center(
                   child: Material(
                     elevation: 5.0,
