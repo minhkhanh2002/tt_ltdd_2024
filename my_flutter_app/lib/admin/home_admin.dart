@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'add_food.dart';
-
+import 'admin_login.dart';
 class HomeAdmin extends StatelessWidget {
   final String username = 'Admin';  // Tên người dùng, có thể thay thế bằng dữ liệu thực tế
 
@@ -21,7 +21,10 @@ class HomeAdmin extends StatelessWidget {
               onSelected: (value) {
                 if (value == 'logout') {
                   // Xử lý đăng xuất
-                  Navigator.pushReplacementNamed(context, '/login');
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AdminLogin()),
+                  );
                 }
               },
               itemBuilder: (context) => [
