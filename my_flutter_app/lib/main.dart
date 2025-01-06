@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:my_flutter_app/admin/admin_login.dart';
+import 'package:my_flutter_app/admin/signup_admin.dart';
 import 'package:my_flutter_app/pages/bottomnav.dart';
 import 'package:my_flutter_app/pages/home.dart';
 import 'package:my_flutter_app/pages/login.dart';
@@ -43,8 +45,10 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        //home: const BottomNav());A
-        home: const HomeAdmin());
+        home: const BottomNav());
+       //home: const HomeAdmin());
+      //  home:  AdminRegister());
+
   }
 }
 
