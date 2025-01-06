@@ -80,7 +80,7 @@ class _HomeState extends State<Home> {
             ),
             // Sử dụng StreamBuilder để hiển thị danh sách món ăn theo chiều ngang
             Container(
-              height: 280, // Đặt chiều cao cố định cho hàng ngang
+              height: 290, // Đặt chiều cao cố định cho hàng ngang
               child: StreamBuilder<QuerySnapshot>(
                 stream: getFoodItems(),
                 builder: (context, snapshot) {
