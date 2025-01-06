@@ -1,8 +1,11 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
+
+import '../service/database.dart';
 
 class AddFood extends StatefulWidget {
   const AddFood({super.key});
@@ -44,21 +47,13 @@ class _AddFoodState extends State<AddFood> {
     }
 
     try {
-      // Lấy đường dẫn ảnh tạm thời từ File
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
       Reference storageRef = FirebaseStorage.instance.ref().child('food_images/$fileName');
 
-      // Tải ảnh lên Firebase Storage
       UploadTask uploadTask = storageRef.putFile(selectedImage!);
       TaskSnapshot snapshot = await uploadTask;
 
-      // Lấy URL của ảnh vừa tải lên
       String downloadUrl = await snapshot.ref.getDownloadURL();
-
-      // Sau khi tải ảnh lên thành công, bạn có thể sử dụng URL này để lưu vào cơ sở dữ liệu
-      print("Uploaded image URL: $downloadUrl");
-
-      // Tiến hành thêm thông tin món ăn với URL ảnh
       addItem(downloadUrl);
 
     } catch (e) {
@@ -68,7 +63,7 @@ class _AddFoodState extends State<AddFood> {
     }
   }
 
-  void addItem(String imageUrl) {
+  void addItem(String imageUrl) async {
     if (nameController.text.isEmpty ||
         priceController.text.isEmpty ||
         detailController.text.isEmpty ||
@@ -83,20 +78,34 @@ class _AddFoodState extends State<AddFood> {
     final itemPrice = priceController.text;
     final itemDetails = detailController.text;
 
-    // TODO: Replace this print with actual item saving logic
-    print("Item Added: $itemName, $itemPrice, $itemDetails, $selectedCategory, $imageUrl");
+    Map<String, dynamic> foodItemData = {
+      "name": itemName,
+      "price": itemPrice,
+      "details": itemDetails,
+      "category": selectedCategory,
+      "imageUrl": imageUrl,
+      "created_at": FieldValue.serverTimestamp(),
+    };
+    DatabaseMethods databaseMethods = DatabaseMethods();
+    try {
+      await databaseMethods.addFoodItem(foodItemData);
 
-    // Reset form
-    setState(() {
-      nameController.clear();
-      priceController.clear();
-      detailController.clear();
-      selectedCategory = null;
-    });
+      setState(() {
+        nameController.clear();
+        priceController.clear();
+        detailController.clear();
+        selectedCategory = null;
+        selectedImage = null;
+      });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Item added successfully!")),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Item added successfully!")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error adding item: $e")),
+      );
+    }
   }
 
   @override
