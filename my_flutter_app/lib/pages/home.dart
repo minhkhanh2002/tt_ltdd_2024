@@ -16,14 +16,34 @@ class _HomeState extends State<Home> {
 
   // Hàm lấy dữ liệu món ăn từ Firestore
   Stream<QuerySnapshot> getFoodItems() {
-    return FirebaseFirestore.instance.collection('foodItems').snapshots();
+    String category = '';
+    if (food) {
+      category = 'Food';
+    } else if (drink) {
+      category = 'Drink';
+    } else if (fruits) {
+      category = 'Fruit';
+    } else if (ice_cream) {
+      category = 'Ice_cream';
+    }
+
+    // Lọc món ăn dựa trên category
+    if (category.isNotEmpty) {
+      return FirebaseFirestore.instance
+          .collection('foodItems')
+          .where('category', isEqualTo: category)
+          .snapshots();
+    } else {
+      // Nếu không chọn loại nào, lấy tất cả món ăn
+      return FirebaseFirestore.instance.collection('foodItems').snapshots();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        margin: const EdgeInsets.only(top: 50, left: 20),
+        margin: const EdgeInsets.only(top: 50, left: 20, right: 20),
         child: Column(
           children: [
             Row(
@@ -56,10 +76,11 @@ class _HomeState extends State<Home> {
               child: showItem(),
             ),
             const SizedBox(
-              height: 30,
+              height: 25,
             ),
-            // Sử dụng StreamBuilder để hiển thị danh sách món ăn
-            Expanded(
+            // Sử dụng StreamBuilder để hiển thị danh sách món ăn theo chiều ngang
+            Container(
+              height: 280, // Đặt chiều cao cố định cho hàng ngang
               child: StreamBuilder<QuerySnapshot>(
                 stream: getFoodItems(),
                 builder: (context, snapshot) {
@@ -75,7 +96,6 @@ class _HomeState extends State<Home> {
                     return Center(child: Text('No items available.'));
                   }
 
-                  // Duyệt qua các món ăn và hiển thị
                   var foodItems = snapshot.data!.docs;
                   return ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -141,7 +161,88 @@ class _HomeState extends State<Home> {
               ),
             ),
             const SizedBox(
-              height: 30,
+              height: 25,
+            ),
+            // Thêm ListView theo chiều dọc
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: getFoodItems(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text('No items available.'));
+                  }
+
+                  var foodItems = snapshot.data!.docs;
+                  return ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemCount: foodItems.length,
+                    itemBuilder: (context, index) {
+                      var foodItem = foodItems[index];
+                      var name = foodItem['name'] ?? 'No name';
+                      var price = foodItem['price'] ?? 'No price';
+                      var imageUrl = foodItem['imageUrl'] ?? '';
+                      var itemDetails = foodItem['details'] ?? 'No details available';
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Details(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.all(4),
+                          child: Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.network(
+                                    imageUrl,
+                                    height: 150,
+                                    width: 150,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  Text(
+                                    name,
+                                    style: AppWidget.semiBoldTextFieldStyle(),
+                                  ),
+                                  const SizedBox(
+                                    height: 3,
+                                  ),
+                                  Text(
+                                    itemDetails,
+                                    style: AppWidget.LightTextFieldStyle(),
+                                  ),
+                                  const SizedBox(
+                                    height: 3,
+                                  ),
+                                  Text(
+                                    "$price vnđ",
+                                    style: AppWidget.semiBoldTextFieldStyle(),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),
