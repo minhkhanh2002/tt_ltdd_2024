@@ -1,7 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.my_flutter_app">
-
+    <!-- Quyền truy cập Internet -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Quyền truy cập Camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- Quyền đọc và ghi bộ nhớ -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:label="my_flutter_app"
         android:name="${applicationName}"

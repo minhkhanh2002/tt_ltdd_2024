@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_flutter_app/pages/details.dart';
 import 'package:my_flutter_app/widget/widget_support.dart';
 
@@ -13,198 +14,240 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool food = false, drink = false, fruits = false, ice_cream = false;
 
+  // Hàm lấy dữ liệu món ăn từ Firestore
+  Stream<QuerySnapshot> getFoodItems() {
+    String category = '';
+    if (food) {
+      category = 'Food';
+    } else if (drink) {
+      category = 'Drink';
+    } else if (fruits) {
+      category = 'Fruit';
+    } else if (ice_cream) {
+      category = 'Ice_cream';
+    }
+
+    // Lọc món ăn dựa trên category
+    if (category.isNotEmpty) {
+      return FirebaseFirestore.instance
+          .collection('foodItems')
+          .where('category', isEqualTo: category)
+          .snapshots();
+    } else {
+      // Nếu không chọn loại nào, lấy tất cả món ăn
+      return FirebaseFirestore.instance.collection('foodItems').snapshots();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-          margin: const EdgeInsets.only(top: 50, left: 20),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Hello Minh Khánh,", style: AppWidget.boldTextFieldStyle()),
-                  Container(
-                    margin: const EdgeInsets.only(right: 20),
-                    padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: const Icon(
-                      Icons.shopping_cart,
-                      color: Colors.white,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Text("Quán Ăn Sinh Diên", style: AppWidget.HeadLineTextFieldStyle()),
-              Text("Ngon, bổ và tiện lợi.", style: AppWidget.LightTextFieldStyle()),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                  margin: const EdgeInsets.only(right: 20), child: showItem()),
-              const SizedBox(
-                height: 30,
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
+      body: Container(
+        margin: const EdgeInsets.only(top: 50, left: 20, right: 20),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Hello Minh Khánh,", style: AppWidget.boldTextFieldStyle()),
+                Container(
+                  margin: const EdgeInsets.only(right: 20),
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: const Icon(
+                    Icons.shopping_cart,
+                    color: Colors.white,
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Text("Quán Ăn Sinh Diên", style: AppWidget.HeadLineTextFieldStyle()),
+            Text("Ngon, bổ và tiện lợi.", style: AppWidget.LightTextFieldStyle()),
+            const SizedBox(
+              height: 20,
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 20),
+              child: showItem(),
+            ),
+            const SizedBox(
+              height: 25,
+            ),
+            // Sử dụng StreamBuilder để hiển thị danh sách món ăn theo chiều ngang
+            Container(
+              height: 290, // Đặt chiều cao cố định cho hàng ngang
+              child: StreamBuilder<QuerySnapshot>(
+                stream: getFoodItems(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text('No items available.'));
+                  }
+
+                  var foodItems = snapshot.data!.docs;
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: foodItems.length,
+                    itemBuilder: (context, index) {
+                      var foodItem = foodItems[index];
+                      var name = foodItem['name'] ?? 'No name';
+                      var price = foodItem['price'] ?? 'No price';
+                      var imageUrl = foodItem['imageUrl'] ?? '';
+                      var itemDetails = foodItem['details'] ?? 'No details available';
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Details()));
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.all(4),
-                        child: Material(
-                          elevation: 5,
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            padding: const EdgeInsets.all(14),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.asset(
-                                  "images/food/comtam.png",
-                                  height: 150,
-                                  width: 150,
-                                  fit: BoxFit.cover,
-                                ),
-                                Text(
-                                  "Cơm tấm",
-                                  style: AppWidget.semiBoldTextFieldStyle(),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "Ngon nhứt náck",
-                                  style: AppWidget.LightTextFieldStyle(),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "30000vnđ",
-                                  style: AppWidget.semiBoldTextFieldStyle(),
-                                )
-                              ],
+                              builder: (context) => Details(),
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(4),
-                      child: Material(
-                        elevation: 5,
-                        borderRadius: BorderRadius.circular(20),
+                          );
+                        },
                         child: Container(
-                          padding: const EdgeInsets.all(14),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.asset(
-                                "images/food/comtam.png",
-                                height: 150,
-                                width: 150,
-                                fit: BoxFit.fill,
+                          margin: const EdgeInsets.all(4),
+                          child: Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.network(
+                                    imageUrl,
+                                    height: 150,
+                                    width: 150,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  Text(
+                                    name,
+                                    style: AppWidget.semiBoldTextFieldStyle(),
+                                  ),
+                                  const SizedBox(
+                                    height: 3,
+                                  ),
+                                  Text(
+                                    itemDetails,
+                                    style: AppWidget.LightTextFieldStyle(),
+                                  ),
+                                  const SizedBox(
+                                    height: 3,
+                                  ),
+                                  Text(
+                                    "$price vnđ",
+                                    style: AppWidget.semiBoldTextFieldStyle(),
+                                  )
+                                ],
                               ),
-                              Text(
-                                "Cơm tấm",
-                                style: AppWidget.semiBoldTextFieldStyle(),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "Ngon nhứt náck",
-                                style: AppWidget.LightTextFieldStyle(),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "30000vnđ",
-                                style: AppWidget.semiBoldTextFieldStyle(),
-                              )
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  ],
-                ),
+                      );
+                    },
+                  );
+                },
               ),
-              const SizedBox(
-                height: 30,
-              ),
-              Container(
-                margin: const EdgeInsets.only(right: 20),
-                child: Material(
-                  elevation: 5,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          "images/food/bunpo.png",
-                          height: 120,
-                          width: 120,
-                          fit: BoxFit.fill,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Column(
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: Text(
-                                "Bún bò Huế đặc biệt thơm ngon mại dzô mại dzô",
-                                style: AppWidget.semiBoldTextFieldStyle(),
+            ),
+            const SizedBox(
+              height: 25,
+            ),
+            // Thêm ListView theo chiều dọc
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: getFoodItems(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text('No items available.'));
+                  }
+
+                  var foodItems = snapshot.data!.docs;
+                  return ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemCount: foodItems.length,
+                    itemBuilder: (context, index) {
+                      var foodItem = foodItems[index];
+                      var name = foodItem['name'] ?? 'No name';
+                      var price = foodItem['price'] ?? 'No price';
+                      var imageUrl = foodItem['imageUrl'] ?? '';
+                      var itemDetails = foodItem['details'] ?? 'No details available';
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Details(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.all(4),
+                          child: Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.network(
+                                    imageUrl,
+                                    height: 150,
+                                    width: 150,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  Text(
+                                    name,
+                                    style: AppWidget.semiBoldTextFieldStyle(),
+                                  ),
+                                  const SizedBox(
+                                    height: 3,
+                                  ),
+                                  Text(
+                                    itemDetails,
+                                    style: AppWidget.LightTextFieldStyle(),
+                                  ),
+                                  const SizedBox(
+                                    height: 3,
+                                  ),
+                                  Text(
+                                    "$price vnđ",
+                                    style: AppWidget.semiBoldTextFieldStyle(),
+                                  )
+                                ],
                               ),
                             ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: Text(
-                                "mpao",
-                                style: AppWidget.LightTextFieldStyle(),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: Text("25000vnđ",
-                                  style: AppWidget.semiBoldTextFieldStyle()),
-                            ),
-                          ],
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
+                      );
+                    },
+                  );
+                },
               ),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget showItem() {
@@ -217,7 +260,6 @@ class _HomeState extends State<Home> {
             drink = false;
             fruits = false;
             ice_cream = false;
-
             setState(() {});
           },
           child: Material(
@@ -243,7 +285,6 @@ class _HomeState extends State<Home> {
             drink = true;
             fruits = false;
             ice_cream = false;
-
             setState(() {});
           },
           child: Material(
@@ -269,7 +310,6 @@ class _HomeState extends State<Home> {
             drink = false;
             fruits = true;
             ice_cream = false;
-
             setState(() {});
           },
           child: Material(
@@ -295,7 +335,6 @@ class _HomeState extends State<Home> {
             drink = false;
             fruits = false;
             ice_cream = true;
-
             setState(() {});
           },
           child: Material(

@@ -1,11 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:my_flutter_app/admin/admin_login.dart';
+import 'package:my_flutter_app/admin/signup_admin.dart';
 import 'package:my_flutter_app/pages/bottomnav.dart';
 import 'package:my_flutter_app/pages/home.dart';
 import 'package:my_flutter_app/pages/login.dart';
 import 'package:my_flutter_app/pages/onboard.dart';
 import 'package:my_flutter_app/widget/app_constant.dart';
+
+import 'admin/home_admin.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,8 +45,10 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        //home: const BottomNav());A
-        home: Onboard());
+        home: const BottomNav());
+      // home: const HomeAdmin());
+      //  home:  AdminRegister());
+
   }
 }
 
