@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:my_flutter_app/pages/details.dart';
+import 'package:my_flutter_app/pages/shopping_cart.dart';
 import 'package:my_flutter_app/widget/widget_support.dart';
 
 class Home extends StatefulWidget {
@@ -49,16 +49,29 @@ class _HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Hello Minh Khánh,", style: AppWidget.boldTextFieldStyle()),
-                Container(
-                  margin: const EdgeInsets.only(right: 20),
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
+                Text("Hello Minh Khánh,",
+                    style: AppWidget.boldTextFieldStyle()),
+                GestureDetector(
+                  onTap: () {
+                    // Điều hướng đến trang shopping_cart.dart
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ShoppingCart(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 20),
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
                       color: Colors.black,
-                      borderRadius: BorderRadius.circular(8)),
-                  child: const Icon(
-                    Icons.shopping_cart,
-                    color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.shopping_cart,
+                      color: Colors.white,
+                    ),
                   ),
                 )
               ],
@@ -66,8 +79,10 @@ class _HomeState extends State<Home> {
             const SizedBox(
               height: 20,
             ),
-            Text("Quán Ăn Sinh Diên", style: AppWidget.HeadLineTextFieldStyle()),
-            Text("Ngon, bổ và tiện lợi.", style: AppWidget.LightTextFieldStyle()),
+            Text("Quán Ăn Sinh Diên",
+                style: AppWidget.HeadLineTextFieldStyle()),
+            Text("Ngon, bổ và tiện lợi.",
+                style: AppWidget.LightTextFieldStyle()),
             const SizedBox(
               height: 20,
             ),
@@ -105,7 +120,8 @@ class _HomeState extends State<Home> {
                       var name = foodItem['name'] ?? 'No name';
                       var price = foodItem['price'] ?? 'No price';
                       var imageUrl = foodItem['imageUrl'] ?? '';
-                      var itemDetails = foodItem['details'] ?? 'No details available';
+                      var itemDetails =
+                          foodItem['details'] ?? 'No details available';
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -189,7 +205,8 @@ class _HomeState extends State<Home> {
                       var name = foodItem['name'] ?? 'No name';
                       var price = foodItem['price'] ?? 'No price';
                       var imageUrl = foodItem['imageUrl'] ?? '';
-                      var itemDetails = foodItem['details'] ?? 'No details available';
+                      var itemDetails =
+                          foodItem['details'] ?? 'No details available';
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
