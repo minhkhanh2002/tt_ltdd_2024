@@ -7,7 +7,7 @@ class DatabaseMethods{
   }
 
   UpdateUserWallet(String id, String amount) async{
-    return await FirebaseFirestore.instance.collection('USER').doc(id).update({"Wallet": amount});
+    return await FirebaseFirestore.instance.collection('USERS').doc(id).update({"Wallet": amount});
   }
 
   Future addFoodItem(Map<String, dynamic> foodItemData) async {
