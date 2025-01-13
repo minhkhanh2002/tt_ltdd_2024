@@ -96,7 +96,7 @@ class _ChatPageState extends State<ChatPage> {
         // Gửi tin nhắn bot chào mừng vào bộ nhớ (không ghi vào Firestore)
         setState(() {
           _messages.add({
-            'text': "Chào bạn, tôi là bot. Có thể tôi giúp gì cho bạn? Gõ giúp, thực đơn, hoặc giới thiệu về web. Để biết thêm chi tiết .Thanks !",
+            'text': "Chào bạn, tôi là bot. Có thể tôi giúp gì cho bạn? Gõ giúp, thực đơn, hoặc giới thiệu về web. Để biết thêm chi tiết .Cảm ơn!",
             'sender': "Bot",
           });
         });
