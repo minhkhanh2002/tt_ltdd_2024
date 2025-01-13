@@ -121,7 +121,7 @@ class _ChatPageState extends State<ChatPage> {
     } else if (userMessage.contains("giới thiệu về web")) {
       botResponse = "Web chúng tôi phục vụ các món ăn ngon, bổ và tiện lợi, giúp bạn thưởng thức các món ăn tuyệt vời mỗi ngày!";
     } else {
-      botResponse = "Bạn vui lòng chờ phản hồi trong it phút. Cảm ơn!";
+      botResponse = "Bạn vui lòng chờ phản hồi từ ad trong it phút. Cảm ơn!";
     }
 
 
