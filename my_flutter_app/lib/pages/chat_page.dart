@@ -14,6 +14,9 @@ class _ChatPageState extends State<ChatPage> {
   late String _userName; // Tên người dùng
   bool _isFirstMessage = true; // Kiểm tra xem có phải tin nhắn đầu tiên không
 
+  // Lưu tin nhắn trong bộ nhớ (không lưu vào Firestore)
+  List<Map<String, String>> _messages = [];
+
   @override
   void initState() {
     super.initState();
@@ -41,22 +44,13 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: [
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _messagesCollection.orderBy('timestamp').snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                final messages = snapshot.data!.docs;
-                return ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    return ListTile(
-                      title: Text(message['text']),
-                      subtitle: Text(message['sender']),
-                    );
-                  },
+            child: ListView.builder(
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[index];
+                return ListTile(
+                  title: Text(message['text']!),
+                  subtitle: Text(message['sender']!),
                 );
               },
             ),
@@ -87,22 +81,24 @@ class _ChatPageState extends State<ChatPage> {
 
   void _sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      // Gửi tin nhắn người dùng
-      await _messagesCollection.add({
-        'text': _messageController.text,
-        'sender': _userName, // Sử dụng tên người dùng đã đăng nhập hoặc 'Anonymous'
-        'timestamp': FieldValue.serverTimestamp(),
+      // Gửi tin nhắn người dùng vào bộ nhớ (không ghi vào Firestore)
+      setState(() {
+        _messages.add({
+          'text': _messageController.text,
+          'sender': _userName, // Sử dụng tên người dùng đã đăng nhập hoặc 'Anonymous'
+        });
       });
       _messageController.clear();
 
       // Kiểm tra nếu đây là tin nhắn đầu tiên
       if (_isFirstMessage) {
         _isFirstMessage = false;
-        // Gửi tin nhắn bot chào mừng
-        await _messagesCollection.add({
-          'text': "Chào bạn, tôi là bot. Có thể tôi giúp gì cho bạn?",
-          'sender': "Bot",
-          'timestamp': FieldValue.serverTimestamp(),
+        // Gửi tin nhắn bot chào mừng vào bộ nhớ (không ghi vào Firestore)
+        setState(() {
+          _messages.add({
+            'text': "Chào bạn, tôi là bot. Có thể tôi giúp gì cho bạn? Viết giúp, thực đơn, hoặc giới thiệu về web. Để biết thêm chi tiết .Thanks !",
+            'sender': "Bot",
+          });
         });
       }
 
@@ -117,7 +113,7 @@ class _ChatPageState extends State<ChatPage> {
     String botResponse = "";
 
     if (userMessage.contains("giúp")) {
-      botResponse = "Tôi có thể giúp bạn với việc gì? Thực đơn, đặt món, hay thông tin khác?";
+      botResponse = "Tôi có thể giúp bạn với việc gì? Thực đơn, hay thông tin khác?";
     } else if (userMessage.contains("giới thiệu") || userMessage.contains("thực đơn")) {
       botResponse = "Đây là menu của chúng tôi: Món ăn, đồ uống, trái cây, và kem. Bạn muốn xem món gì?";
     } else if (userMessage.contains("cảm ơn")) {
@@ -125,14 +121,15 @@ class _ChatPageState extends State<ChatPage> {
     } else if (userMessage.contains("giới thiệu về web")) {
       botResponse = "Web chúng tôi phục vụ các món ăn ngon, bổ và tiện lợi, giúp bạn thưởng thức các món ăn tuyệt vời mỗi ngày!";
     } else {
-      botResponse = " Bạn vui lòng chờ phản hôi. cảm ơn !";
+      botResponse = "Bạn vui lòng chờ phản hồi trong it phút. Cảm ơn!";
     }
 
-    // Gửi phản hồi tự động từ bot
-    await _messagesCollection.add({
-      'text': botResponse,
-      'sender': "Bot",
-      'timestamp': FieldValue.serverTimestamp(),
+
+    setState(() {
+      _messages.add({
+        'text': botResponse,
+        'sender': "Bot",
+      });
     });
   }
 }
