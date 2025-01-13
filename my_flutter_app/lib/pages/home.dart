@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_flutter_app/pages/details.dart';
 import 'package:my_flutter_app/widget/widget_support.dart';
+import 'package:my_flutter_app/service/shared_pref.dart';
+
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,6 +16,29 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool food = false, drink = false, fruits = false, ice_cream = false;
+  String? username;
+//lấy tên đăng nhập
+  getTheSharedPref() async{
+    username = await SharedPreferenceHelper().getUserName();
+
+    setState(() {
+
+    });
+  }
+
+  onTheLoad() async{
+    await getTheSharedPref();
+    setState(() {
+
+    });
+
+  }
+
+  @override
+  void initState() {
+    onTheLoad();
+    super.initState();
+  }
 
   // Hàm lấy dữ liệu món ăn từ Firestore
   Stream<QuerySnapshot> getFoodItems() {
@@ -49,7 +75,7 @@ class _HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Hello Minh Khánh,", style: AppWidget.boldTextFieldStyle()),
+                Text("Hello "+ username! +",", style: AppWidget.boldTextFieldStyle()),
                 Container(
                   margin: const EdgeInsets.only(right: 20),
                   padding: const EdgeInsets.all(3),

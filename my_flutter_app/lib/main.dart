@@ -8,7 +8,7 @@ import 'package:my_flutter_app/pages/home.dart';
 import 'package:my_flutter_app/pages/login.dart';
 import 'package:my_flutter_app/pages/onboard.dart';
 import 'package:my_flutter_app/widget/app_constant.dart';
-
+// import 'package:firebase_app_check/firebase_app_check.dart';
 import 'admin/home_admin.dart';
 
 void main() async{
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         ),
        // home: const BottomNav());
       // home: const HomeAdmin());
-      //  home:  AdminRegister());
+      // home:  AdminRegister());
         home: Onboard());
   }
 }
