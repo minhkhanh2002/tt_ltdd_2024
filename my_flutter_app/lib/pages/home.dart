@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_flutter_app/pages/details.dart';
+import 'package:my_flutter_app/pages/chat_page.dart';  // Import trang ChatPage
 import 'package:my_flutter_app/widget/widget_support.dart';
 
 class Home extends StatefulWidget {
@@ -42,6 +43,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Trang Chủ'),
+      ),
       body: Container(
         margin: const EdgeInsets.only(top: 50, left: 20, right: 20),
         child: Column(
@@ -247,6 +251,18 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+      // Thêm FloatingActionButton ở đây
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Điều hướng đến trang chat khi nhấn nút
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatPage()), // Điều hướng đến ChatPage
+          );
+        },
+        child: Icon(Icons.chat),
+        backgroundColor: Colors.blue,
+      ),
     );
   }
 
@@ -354,6 +370,7 @@ class _HomeState extends State<Home> {
                 )),
           ),
         )
+
       ],
     );
   }
