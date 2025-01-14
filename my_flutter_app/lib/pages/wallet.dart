@@ -19,6 +19,7 @@ class _WalletState extends State<Wallet> {
 
   String? wallet,id;
   int? add;
+  TextEditingController amountcontroller = new TextEditingController();
 
   getTheSharedPref() async{
     wallet = await SharedPreferenceHelper().getUserWallet();
@@ -130,12 +131,17 @@ class _WalletState extends State<Wallet> {
               // ),
             ],),
             SizedBox(height: 30,),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              padding: EdgeInsets.symmetric(vertical: 12),
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(color: Color(0xFF008080), borderRadius: BorderRadius.circular(10)),
-              child: Center(child: Text("Nạp tiền vào ví", style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'Poppins', fontWeight: FontWeight.bold),),),
+            GestureDetector(
+              onTap: (){
+                openEdit();
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(vertical: 12),
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(color: Color(0xFF008080), borderRadius: BorderRadius.circular(10)),
+                child: Center(child: Text("Nạp tiền vào ví", style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'Poppins', fontWeight: FontWeight.bold),),),
+              ),
             ),
           ],),
       ),
@@ -178,7 +184,7 @@ class _WalletState extends State<Wallet> {
                         Icons.check_circle,
                         color: Colors.green,
                       ),
-                      Text("Payment Successfull"),
+                      Text("Thanh toán thành công"),
                     ],
                   ),
                 ],
@@ -229,4 +235,114 @@ class _WalletState extends State<Wallet> {
     final calculatedAmount = (int.parse(amount));
     return calculatedAmount.toString();
   }
+
+  // Future openEdit1()=> showDialog(context: context, builder: (context)=>AlertDialog(
+  //   content: SingleChildScrollView(
+  //     child: Container(
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Row(
+  //             children: [
+  //               GestureDetector(
+  //                   onTap: (){
+  //                     Navigator.pop(context);
+  //                   },
+  //                   child: Icon(Icons.cancel)),
+  //                   SizedBox(width: 60,),
+  //                   Center(
+  //                     child: Text("Nạp vào ví",style: TextStyle(color: Color(0xFF008080),
+  //                     fontWeight: FontWeight.bold),),
+  //                   )
+  //             ],
+  //           ),
+  //           SizedBox(height: 20,),
+  //           Text("Amount"),
+  //           SizedBox(height: ,),
+  //           Container(
+  //             padding: Eg,
+  //           )
+  //
+  //         ],
+  //       ),
+  //     ),
+  //   ),
+  // ));
+
+  Future openEdit() => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(Icons.cancel)),
+                    SizedBox(
+                      width: 60.0,
+                    ),
+                    Center(
+                      child: Text(
+                        "Nạp tiền vào ví",
+                        style: TextStyle(
+                          color: Color(0xFF008080),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Text("Số tiền"),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black38, width: 2.0),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: TextField(
+                    controller: amountcontroller,
+                    decoration: InputDecoration(
+                        border: InputBorder.none, hintText: 'Nhập số tiền muốn nạp'),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Center(
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.pop(context);
+                      makePayment(amountcontroller.text);
+                    },
+                    child: Container(
+                      width: 100,
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF008080),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                          child: Text(
+                            "Thanh toán",
+                            style: TextStyle(color: Colors.white),
+                          )),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ));
 }
