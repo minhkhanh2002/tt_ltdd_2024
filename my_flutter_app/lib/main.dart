@@ -47,10 +47,10 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
        // home: const BottomNav());
-      // home: const HomeAdmin());
+       home: const HomeAdmin());
       //  home:  AdminRegister());
      //   home: Onboard());
-    home: ChatPage());
+    //home: ChatPage());
 
   }
 }

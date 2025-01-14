@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'add_food.dart';
 import 'admin_login.dart';
+import 'view_chats.dart';  // Import trang mới
+
 class HomeAdmin extends StatelessWidget {
-  final String username = 'Admin';  // Tên người dùng, có thể thay thế bằng dữ liệu thực tế
+  final String username = 'Admin';  // Tên người dùng
 
   const HomeAdmin({super.key});
 
@@ -14,13 +16,11 @@ class HomeAdmin extends StatelessWidget {
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
         actions: [
-          // Hiển thị nút hình tròn và menu popup
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'logout') {
-                  // Xử lý đăng xuất
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const AdminLogin()),
@@ -40,12 +40,9 @@ class HomeAdmin extends StatelessWidget {
                 ),
               ],
               child: CircleAvatar(
-                radius: 20,  // Kích thước của vòng tròn
+                radius: 20,
                 backgroundColor: Colors.deepPurple,
-                child: const Icon(
-                  Icons.person,  // Biểu tượng người dùng
-                  color: Colors.white,
-                ),
+                child: const Icon(Icons.person, color: Colors.white),
               ),
             ),
           ),
@@ -57,7 +54,7 @@ class HomeAdmin extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Welcome, Admin!",  // Chào mừng người dùng
+              "Welcome, Admin!",
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -68,7 +65,6 @@ class HomeAdmin extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  // Mục Add Food Items
                   ListTile(
                     onTap: () {
                       Navigator.push(
@@ -77,7 +73,7 @@ class HomeAdmin extends StatelessWidget {
                       );
                     },
                     leading: Image.asset(
-                      "images/food/comtam.png",  // Hình ảnh có thể thay đổi nếu cần
+                      "images/food/comtam.png",
                       height: 50,
                       width: 50,
                       fit: BoxFit.cover,
@@ -96,7 +92,32 @@ class HomeAdmin extends StatelessWidget {
                     ),
                     tileColor: Colors.grey[200],
                   ),
-                  // Bạn có thể thêm nhiều mục khác ở đây nếu cần
+                  ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ViewChats()), // Điều hướng tới trang ViewChats
+                      );
+                    },
+                    leading: Icon(
+                      Icons.chat,
+                      size: 50,
+                      color: Colors.deepPurple,
+                    ),
+                    title: const Text(
+                      "View Chats",
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: const Text("Read all user conversations."),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    tileColor: Colors.grey[200],
+                  ),
                 ],
               ),
             ),
