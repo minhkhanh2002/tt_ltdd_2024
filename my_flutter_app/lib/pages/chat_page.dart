@@ -106,7 +106,7 @@ class _ChatPageState extends State<ChatPage> {
         _isFirstMessage = false;
         // Gửi tin nhắn chào mừng từ bot
         await _messagesCollection.add({
-          'text': "Chào bạn, tôi là bot. Có thể tôi giúp gì cho bạn?( Gõ giúp, giới thiệu về web hoặc thực đơn để biết thêm chi tiết , cảm ơn !)",
+          'text': "Chào bạn , tôi là bot. Có thể tôi giúp gì cho bạn?( Gõ giúp, giới thiệu về web hoặc thực đơn để biết thêm chi tiết , cảm ơn !)",
           'sender': "Bot",
           'recipient': _userName, // Gửi phản hồi từ bot tới người dùng
           'timestamp': FieldValue.serverTimestamp(),
