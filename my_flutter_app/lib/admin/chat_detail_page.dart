@@ -27,23 +27,28 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _messagesCollection
-                  .where('sender', isEqualTo: widget.userName)
-                  .orderBy('timestamp') // Sắp xếp tin nhắn theo thời gian
+                  .where('recipient', isEqualTo: widget.userName) // Lọc tin nhắn cho người dùng này
+                  .orderBy('timestamp', descending: true) // Sắp xếp tin nhắn theo thời gian mới nhất trước
                   .snapshots(),
               builder: (context, snapshot) {
-                // Kiểm tra trạng thái kết nối Firestore
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
 
-                // Kiểm tra khi không có dữ liệu hoặc dữ liệu trống
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                if (!snapshot.hasData) {
+                  return Center(child: Text("No data available"));
+                }
+
+                if (snapshot.data!.docs.isEmpty) {
                   return Center(child: Text("No messages yet"));
                 }
 
+
                 final messages = snapshot.data!.docs;
+
                 return ListView.builder(
                   itemCount: messages.length,
+                  reverse: true, // Đảo ngược danh sách để tin nhắn mới nhất nằm ở cuối
                   itemBuilder: (context, index) {
                     final message = messages[index];
                     final messageText = message['text'];
@@ -56,6 +61,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     return ListTile(
                       title: Text(messageText),
                       subtitle: Text("$senderName at $formattedTime"),
+                      tileColor: senderName == 'Admin'
+                          ? Colors.grey[200] // Màu nền khác cho tin nhắn của Admin
+                          : Colors.transparent,
                     );
                   },
                 );
@@ -88,10 +96,10 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   void _sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      // Gửi tin nhắn với người gửi là "Admin" hoặc tên người dùng
       await _messagesCollection.add({
         'text': _messageController.text,
-        'sender': 'Admin',  //  người gửi là admin
+        'sender': 'Admin',  // Đây là tin nhắn từ admin
+        'recipient': widget.userName, // Tin nhắn gửi đến người dùng hiện tại
         'timestamp': FieldValue.serverTimestamp(),
       });
       _messageController.clear();

@@ -42,7 +42,9 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _messagesCollection.orderBy('timestamp').snapshots(),
+              stream: _messagesCollection
+                  .orderBy('timestamp')
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
@@ -55,6 +57,9 @@ class _ChatPageState extends State<ChatPage> {
                     return ListTile(
                       title: Text(message['text']),
                       subtitle: Text(message['sender']),
+                      tileColor: message['sender'] == _userName
+                          ? Colors.blue[50]
+                          : Colors.grey[200], // Màu nền cho tin nhắn của người dùng và bot
                     );
                   },
                 );
@@ -91,6 +96,7 @@ class _ChatPageState extends State<ChatPage> {
       await _messagesCollection.add({
         'text': _messageController.text,
         'sender': _userName, // Sử dụng tên người dùng đã đăng nhập hoặc 'Anonymous'
+        'recipient': 'Admin', // Gửi tin nhắn cho Admin (hoặc bot)
         'timestamp': FieldValue.serverTimestamp(),
       });
       _messageController.clear();
@@ -98,10 +104,11 @@ class _ChatPageState extends State<ChatPage> {
       // Kiểm tra nếu đây là tin nhắn đầu tiên
       if (_isFirstMessage) {
         _isFirstMessage = false;
-        // Gửi tin nhắn bot chào mừng
+        // Gửi tin nhắn chào mừng từ bot
         await _messagesCollection.add({
           'text': "Chào bạn, tôi là bot. Có thể tôi giúp gì cho bạn?( Gõ giúp, giới thiệu về web hoặc thực đơn để biết thêm chi tiết , cảm ơn !)",
           'sender': "Bot",
+          'recipient': _userName, // Gửi phản hồi từ bot tới người dùng
           'timestamp': FieldValue.serverTimestamp(),
         });
       }
@@ -131,7 +138,8 @@ class _ChatPageState extends State<ChatPage> {
     // Gửi phản hồi tự động từ bot
     await _messagesCollection.add({
       'text': botResponse,
-      'sender': "Bot",
+      'sender': "Bot",  // Tin nhắn phản hồi từ bot
+      'recipient': _userName, // Gửi phản hồi từ bot đến người dùng
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
