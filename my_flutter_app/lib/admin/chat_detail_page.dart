@@ -24,12 +24,11 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       ),
       body: Column(
         children: [
+          // StreamBuilder for user messages
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _messagesCollection
-
-                  .where('recipient', isEqualTo: widget.userName) // Lọc tin nhắn cho người dùng này
-                  //.orderBy('timestamp', descending: true) // Sắp xếp tin nhắn theo thời gian mới nhất trước
+                  .where('sender', isEqualTo: widget.userName) // Tin nhắn từ người dùng
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -39,22 +38,17 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   debugPrint('Error: ${snapshot.error}');
                   return Center(child: Text('Something went wrong!'));
                 }
-                if (!snapshot.hasData) {
-                  return Center(child: Text("No data available"));
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text("No user messages yet"));
                 }
 
-                if (snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text("No messages yet"));
-                }
-
-
-                final messages = snapshot.data!.docs;
+                final userMessages = snapshot.data!.docs;
 
                 return ListView.builder(
-                  itemCount: messages.length,
+                  itemCount: userMessages.length,
                   reverse: true, // Đảo ngược danh sách để tin nhắn mới nhất nằm ở cuối
                   itemBuilder: (context, index) {
-                    final message = messages[index];
+                    final message = userMessages[index];
                     final messageText = message['text'];
                     final senderName = message['sender'];
                     final timestamp = message['timestamp']?.toDate();
@@ -74,6 +68,53 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
               },
             ),
           ),
+
+          // StreamBuilder for admin messages
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _messagesCollection
+                  .where('sender', isEqualTo: 'Admin') // Tin nhắn từ Admin
+                  .where('recipient', isEqualTo: widget.userName) // Tin nhắn gửi đến người dùng
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  debugPrint('Error: ${snapshot.error}');
+                  return Center(child: Text('Something went wrong!'));
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text("No admin messages yet"));
+                }
+
+                final adminMessages = snapshot.data!.docs;
+
+                return ListView.builder(
+                  itemCount: adminMessages.length,
+                  reverse: true, // Đảo ngược danh sách để tin nhắn mới nhất nằm ở cuối
+                  itemBuilder: (context, index) {
+                    final message = adminMessages[index];
+                    final messageText = message['text'];
+                    final senderName = message['sender'];
+                    final timestamp = message['timestamp']?.toDate();
+                    final formattedTime = timestamp != null
+                        ? "${timestamp.hour}:${timestamp.minute}"
+                        : "Unknown Time";
+
+                    return ListTile(
+                      title: Text(messageText),
+                      subtitle: Text("$senderName at $formattedTime"),
+                      tileColor: senderName == 'Admin'
+                          ? Colors.grey[200] // Màu nền khác cho tin nhắn của Admin
+                          : Colors.transparent,
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
