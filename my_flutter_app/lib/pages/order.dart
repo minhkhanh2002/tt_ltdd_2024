@@ -106,7 +106,7 @@ class _OrderState extends State<Order> {
                                 style: AppWidget.semiBoldTextFieldStyle(),
                               ),
                               Text(
-                                "\$"+ ds["Total"],
+                                 ds["Total"]+" VND",
                                 style: AppWidget.semiBoldTextFieldStyle(),
                               )
                             ],
@@ -136,7 +136,7 @@ class _OrderState extends State<Order> {
                     padding: EdgeInsets.only(bottom: 10.0),
                     child: Center(
                         child: Text(
-                          "Food Cart",
+                          "Giỏ hàng",
                           style: AppWidget.HeadLineTextFieldStyle(),
                         )))),
             SizedBox(
@@ -153,11 +153,11 @@ class _OrderState extends State<Order> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Total Price",
+                    "Tổng tiền",
                     style: AppWidget.boldTextFieldStyle(),
                   ),
                   Text(
-                    "\$"+ total.toString(),
+                     total.toString() + " VND",
                     style: AppWidget.semiBoldTextFieldStyle(),
                   )
                 ],
@@ -182,7 +182,7 @@ class _OrderState extends State<Order> {
                   // Thông báo thanh toán thành công
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Payment successful!'),
+                      content: Text('Thanh toán thành công!'),
                     ),
                   );
 
@@ -195,7 +195,7 @@ class _OrderState extends State<Order> {
                   // Thông báo không đủ tiền
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('You do not have enough balance to complete this transaction'),
+                      content: Text('Số dư không đủ để thực hiện giao dịch'),
                     ),
                   );
                 }
@@ -208,7 +208,7 @@ class _OrderState extends State<Order> {
                 margin: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
                 child: Center(
                     child: Text(
-                      "CheckOut",
+                      "Thanh toán",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 20.0,

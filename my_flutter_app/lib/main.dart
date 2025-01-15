@@ -32,11 +32,12 @@ void main() async{
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'FoodApp',
         theme: ThemeData(
           // This is the theme of your application.
           //
@@ -58,9 +59,9 @@ class MyApp extends StatelessWidget {
         ),
        // home: const BottomNav());
       // home: const HomeAdmin());
-        home: const Order());
+        //home: const Order());
       //  home:  AdminRegister());
-        //home: Onboard());
+        home: Onboard());
   }
 }
 

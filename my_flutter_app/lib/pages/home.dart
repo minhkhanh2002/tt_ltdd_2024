@@ -69,9 +69,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Trang Chủ'),
-      ),
+      // appBar: AppBar(
+      //   title: Text('Trang Chủ'),
+      // ),
       body: Container(
         margin: const EdgeInsets.only(top: 50, left: 20, right: 20),
         child: Column(
@@ -79,7 +79,7 @@ class _HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Hello "+ username! +",", style: AppWidget.boldTextFieldStyle()),
+                Text("Xin chào "+ username! +",", style: AppWidget.boldTextFieldStyle()),
                 Container(
                   margin: const EdgeInsets.only(right: 20),
                   padding: const EdgeInsets.all(3),
