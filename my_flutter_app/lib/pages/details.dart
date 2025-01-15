@@ -29,6 +29,7 @@ class _DetailsState extends State<Details> {
     loadUserId();
   }
 
+  // Lấy userId từ SharedPreferences
   void loadUserId() async {
     userId = await SharedPreferenceHelper().getUserId();
     setState(() {});
@@ -153,22 +154,36 @@ class _DetailsState extends State<Details> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      Map<String, dynamic> addFoodtoCart = {
-                        "Name": widget.name,
-                        "Quantity": quantity.toString(),
-                        "Total": total.toString(),
-                        "Image": widget.image,
-                      };
-                      await DatabaseMethods().addFoodItem(addFoodtoCart);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.orangeAccent,
-                          content: Text(
-                            "Food Added to Cart",
-                            style: TextStyle(fontSize: 18.0),
+                      // Đảm bảo rằng userId đã được tải thành công trước khi thêm món vào giỏ
+                      if (userId != null) {
+                        Map<String, dynamic> addFoodToCart = {
+                          "Name": widget.name,
+                          "Quantity": quantity.toString(),
+                          "Total": total.toString(),
+                          "Image": widget.image,
+                        };
+
+                        await DatabaseMethods().addFoodToCart(addFoodToCart, userId!); // Lưu món vào giỏ hàng của người dùng
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.orangeAccent,
+                            content: Text(
+                              "Food Added to Cart",
+                              style: TextStyle(fontSize: 18.0),
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.red,
+                            content: Text(
+                              "User ID not found!",
+                              style: TextStyle(fontSize: 18.0),
+                            ),
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width / 2,
