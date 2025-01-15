@@ -81,7 +81,18 @@ class _LogInState extends State<LogIn> {
   userLogin() async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      // Nếu đăng nhập thành công, điều hướng đến BottomNav
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => BottomNav()),
+      );
 
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Đăng nhập thành công!",
+          style: TextStyle(fontSize: 18.0, color: Colors.black),
+        ),
+      ));
     }on FirebaseAuthException catch (e){
       if (e.code=='user-not-found'){
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
