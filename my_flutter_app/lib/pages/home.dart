@@ -115,7 +115,12 @@ class _HomeState extends State<Home> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Details(),
+                              builder: (context) => Details(
+                                detail: itemDetails, // Truyền tham số detail
+                                image: imageUrl,     // Truyền tham số image
+                                name: name,          // Truyền tham số name
+                                price: price,        // Truyền tham số price),
+                              ),
                             ),
                           );
                         },
@@ -199,8 +204,13 @@ class _HomeState extends State<Home> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Details(),
+                              builder: (context) => Details(
+                            detail: itemDetails, // Truyền tham số detail
+                            image: imageUrl,     // Truyền tham số image
+                            name: name,          // Truyền tham số name
+                            price: price,        // Truyền tham số price),
                             ),
+                          ),
                           );
                         },
                         child: Container(
