@@ -29,20 +29,7 @@ class DatabaseMethods{
       return 'Error adding food to cart';
     }
   }
-// Method to update food quantity in the user's cart
-  Future<void> updateFoodQuantity(String userId, String foodId, String newQuantity) async {
-    try {
-      // Reference to the user's cart collection
-      CollectionReference cartRef = FirebaseFirestore.instance.collection('users').doc(userId).collection('cart');
 
-      // Update the quantity of the food item in the cart
-      await cartRef.doc(foodId).update({
-        'Quantity': newQuantity,
-      });
-    } catch (e) {
-      print('Error updating food quantity: $e');
-    }
-  }
 
   // Lấy giỏ hàng của người dùng (dùng khi hiển thị giỏ hàng)
   Future getUserCart(String userId) async {
