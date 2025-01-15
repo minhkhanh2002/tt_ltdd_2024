@@ -24,6 +24,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             "Yêu cầu lấy lại mật khẩu đã được gửi!",
             style: TextStyle(fontSize: 18.0),
           )));
+      //3s sau quay về trang đăng nhập
+      Future.delayed(Duration(seconds: 3), () {
+        Navigator.pop(context);
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == "user-not-found") {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
