@@ -27,14 +27,18 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _messagesCollection
+
                   .where('recipient', isEqualTo: widget.userName) // Lọc tin nhắn cho người dùng này
-                  .orderBy('timestamp', descending: true) // Sắp xếp tin nhắn theo thời gian mới nhất trước
+                  //.orderBy('timestamp', descending: true) // Sắp xếp tin nhắn theo thời gian mới nhất trước
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
-
+                if (snapshot.hasError) {
+                  debugPrint('Error: ${snapshot.error}');
+                  return Center(child: Text('Something went wrong!'));
+                }
                 if (!snapshot.hasData) {
                   return Center(child: Text("No data available"));
                 }
