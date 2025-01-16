@@ -1,12 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:my_flutter_app/pages/chat_page.dart'; // Import trang ChatPage
 import 'package:my_flutter_app/pages/details.dart';
-import 'package:my_flutter_app/pages/chat_page.dart';  // Import trang ChatPage
-import 'package:my_flutter_app/widget/widget_support.dart';
 import 'package:my_flutter_app/service/shared_pref.dart';
-
-
+import 'package:my_flutter_app/widget/widget_support.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -19,20 +16,15 @@ class _HomeState extends State<Home> {
   bool food = false, drink = false, fruits = false, ice_cream = false;
   String? username;
 //lấy tên đăng nhập
-  getTheSharedPref() async{
+  getTheSharedPref() async {
     username = await SharedPreferenceHelper().getUserName();
 
-    setState(() {
-
-    });
+    setState(() {});
   }
 
-  onTheLoad() async{
+  onTheLoad() async {
     await getTheSharedPref();
-    setState(() {
-
-    });
-
+    setState(() {});
   }
 
   @override
@@ -79,16 +71,22 @@ class _HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Xin chào "+ username! +",", style: AppWidget.boldTextFieldStyle()),
-                Container(
-                  margin: const EdgeInsets.only(right: 20),
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(8)),
-                  child: const Icon(
-                    Icons.shopping_cart,
-                    color: Colors.white,
+                Text("Xin chào " + username! + ",",
+                    style: AppWidget.boldTextFieldStyle()),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {});
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 20),
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: const Icon(
+                      Icons.home,
+                      color: Colors.white,
+                    ),
                   ),
                 )
               ],
@@ -96,8 +94,10 @@ class _HomeState extends State<Home> {
             const SizedBox(
               height: 20,
             ),
-            Text("Quán Ăn Sinh Diên", style: AppWidget.HeadLineTextFieldStyle()),
-            Text("Ngon, bổ và tiện lợi.", style: AppWidget.LightTextFieldStyle()),
+            Text("Quán Ăn Sinh Diên",
+                style: AppWidget.HeadLineTextFieldStyle()),
+            Text("Ngon, bổ và tiện lợi.",
+                style: AppWidget.LightTextFieldStyle()),
             const SizedBox(
               height: 20,
             ),
@@ -135,7 +135,8 @@ class _HomeState extends State<Home> {
                       var name = foodItem['name'] ?? 'No name';
                       var price = foodItem['price'] ?? 'No price';
                       var imageUrl = foodItem['imageUrl'] ?? '';
-                      var itemDetails = foodItem['details'] ?? 'No details available';
+                      var itemDetails =
+                          foodItem['details'] ?? 'No details available';
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -143,9 +144,9 @@ class _HomeState extends State<Home> {
                             MaterialPageRoute(
                               builder: (context) => Details(
                                 detail: itemDetails, // Truyền tham số detail
-                                image: imageUrl,     // Truyền tham số image
-                                name: name,          // Truyền tham số name
-                                price: price,        // Truyền tham số price),
+                                image: imageUrl, // Truyền tham số image
+                                name: name, // Truyền tham số name
+                                price: price, // Truyền tham số price),
                               ),
                             ),
                           );
@@ -224,19 +225,20 @@ class _HomeState extends State<Home> {
                       var name = foodItem['name'] ?? 'No name';
                       var price = foodItem['price'] ?? 'No price';
                       var imageUrl = foodItem['imageUrl'] ?? '';
-                      var itemDetails = foodItem['details'] ?? 'No details available';
+                      var itemDetails =
+                          foodItem['details'] ?? 'No details available';
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => Details(
-                            detail: itemDetails, // Truyền tham số detail
-                            image: imageUrl,     // Truyền tham số image
-                            name: name,          // Truyền tham số name
-                            price: price,        // Truyền tham số price),
+                                detail: itemDetails, // Truyền tham số detail
+                                image: imageUrl, // Truyền tham số image
+                                name: name, // Truyền tham số name
+                                price: price, // Truyền tham số price),
+                              ),
                             ),
-                          ),
                           );
                         },
                         child: Container(
@@ -293,7 +295,8 @@ class _HomeState extends State<Home> {
           // Điều hướng đến trang chat khi nhấn nút
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ChatPage()), // Điều hướng đến ChatPage
+            MaterialPageRoute(
+                builder: (context) => ChatPage()), // Điều hướng đến ChatPage
           );
         },
         child: Icon(Icons.chat),
@@ -406,7 +409,6 @@ class _HomeState extends State<Home> {
                 )),
           ),
         )
-
       ],
     );
   }

@@ -121,14 +121,14 @@ class _DetailsState extends State<Details> {
             Row(
               children: [
                 Text(
-                  "Delivery Time",
+                  "Thời gian giao hàng",
                   style: AppWidget.semiBoldTextFieldStyle(),
                 ),
                 SizedBox(width: 25.0),
                 Icon(Icons.alarm, color: Colors.black54),
                 SizedBox(width: 5.0),
                 Text(
-                  "30 min",
+                  "30 phút",
                   style: AppWidget.semiBoldTextFieldStyle(),
                 ),
               ],
@@ -143,11 +143,11 @@ class _DetailsState extends State<Details> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Total Price",
+                        "Tổng tiền",
                         style: AppWidget.semiBoldTextFieldStyle(),
                       ),
                       Text(
-                        "\$" + total.toString(),
+                        total.toString() + " VND",
                         style: AppWidget.HeadLineTextFieldStyle(),
                       ),
                     ],
@@ -163,12 +163,13 @@ class _DetailsState extends State<Details> {
                           "Image": widget.image,
                         };
 
-                        await DatabaseMethods().addFoodToCart(addFoodToCart, userId!); // Lưu món vào giỏ hàng của người dùng
+                        await DatabaseMethods().addFoodToCart(addFoodToCart,
+                            userId!); // Lưu món vào giỏ hàng của người dùng
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             backgroundColor: Colors.orangeAccent,
                             content: Text(
-                              "Food Added to Cart",
+                              "Thêm vào giỏ hàng",
                               style: TextStyle(fontSize: 18.0),
                             ),
                           ),
@@ -178,7 +179,7 @@ class _DetailsState extends State<Details> {
                           SnackBar(
                             backgroundColor: Colors.red,
                             content: Text(
-                              "User ID not found!",
+                              "Không tìm thấy người dùng!",
                               style: TextStyle(fontSize: 18.0),
                             ),
                           ),
@@ -196,7 +197,7 @@ class _DetailsState extends State<Details> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            "Add to cart",
+                            "Thêm vào giỏ hàng",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16.0,

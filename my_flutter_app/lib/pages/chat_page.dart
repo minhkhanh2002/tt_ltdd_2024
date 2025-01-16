@@ -10,7 +10,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final CollectionReference _messagesCollection =
-  FirebaseFirestore.instance.collection('messages');
+      FirebaseFirestore.instance.collection('messages');
   late String _userName; // Tên người dùng
   bool _isFirstMessage = true; // Kiểm tra xem có phải tin nhắn đầu tiên không
 
@@ -25,7 +25,9 @@ class _ChatPageState extends State<ChatPage> {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       setState(() {
-        _userName = user.displayName ?? user.email ?? 'Anonymous'; // Sử dụng displayName nếu có, nếu không thì dùng email
+        _userName = user.displayName ??
+            user.email ??
+            'Anonymous'; // Sử dụng displayName nếu có, nếu không thì dùng email
       });
     } else {
       setState(() {
@@ -42,9 +44,7 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _messagesCollection
-                  .orderBy('timestamp')
-                  .snapshots(),
+              stream: _messagesCollection.orderBy('timestamp').snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
@@ -59,7 +59,8 @@ class _ChatPageState extends State<ChatPage> {
                       subtitle: Text(message['sender']),
                       tileColor: message['sender'] == _userName
                           ? Colors.blue[50]
-                          : Colors.grey[200], // Màu nền cho tin nhắn của người dùng và bot
+                          : Colors.grey[
+                              200], // Màu nền cho tin nhắn của người dùng và bot
                     );
                   },
                 );
@@ -95,7 +96,8 @@ class _ChatPageState extends State<ChatPage> {
       // Gửi tin nhắn người dùng
       await _messagesCollection.add({
         'text': _messageController.text,
-        'sender': _userName, // Sử dụng tên người dùng đã đăng nhập hoặc 'Anonymous'
+        'sender':
+            _userName, // Sử dụng tên người dùng đã đăng nhập hoặc 'Anonymous'
         'recipient': 'Admin', // Gửi tin nhắn cho Admin (hoặc bot)
         'timestamp': FieldValue.serverTimestamp(),
       });
@@ -106,7 +108,8 @@ class _ChatPageState extends State<ChatPage> {
         _isFirstMessage = false;
         // Gửi tin nhắn chào mừng từ bot
         await _messagesCollection.add({
-          'text': "Chào bạn , tôi là bot. Có thể tôi giúp gì cho bạn?( Gõ giúp, giới thiệu về web hoặc thực đơn để biết thêm chi tiết , cảm ơn !)",
+          'text':
+              "Chào bạn , tôi là bot. Có thể tôi giúp gì cho bạn?( Gõ giúp, giới thiệu về web hoặc thực đơn để biết thêm chi tiết , cảm ơn !)",
           'sender': "Bot",
           'recipient': _userName, // Gửi phản hồi từ bot tới người dùng
           'timestamp': FieldValue.serverTimestamp(),
@@ -123,22 +126,26 @@ class _ChatPageState extends State<ChatPage> {
     final userMessage = _messageController.text.toLowerCase();
     String botResponse = "";
 
-    if (userMessage.contains("giúp")) {
-      botResponse = "Tôi có thể giúp bạn với việc gì? Thực đơn, đặt món, hay thông tin khác?";
-    } else if (userMessage.contains("giới thiệu") || userMessage.contains("thực đơn")) {
-      botResponse = "Đây là menu của chúng tôi: Món ăn, đồ uống, trái cây, và kem. Bạn muốn xem món gì?";
+    if (userMessage.contains("")) {
+      botResponse =
+          "Tôi có thể giúp bạn với việc gì? Thực đơn, đặt món, hay thông tin khác?";
+    } else if (userMessage.contains("giới thiệu") ||
+        userMessage.contains("thực đơn")) {
+      botResponse =
+          "Đây là menu của chúng tôi: Món ăn, đồ uống, trái cây, và kem. Bạn muốn xem món gì?";
     } else if (userMessage.contains("cảm ơn")) {
       botResponse = "Không có gì! Hãy để tôi biết nếu bạn cần thêm sự giúp đỡ.";
     } else if (userMessage.contains("giới thiệu về web")) {
-      botResponse = "Web chúng tôi phục vụ các món ăn ngon, bổ và tiện lợi, giúp bạn thưởng thức các món ăn tuyệt vời mỗi ngày!";
+      botResponse =
+          "Web chúng tôi phục vụ các món ăn ngon, bổ và tiện lợi, giúp bạn thưởng thức các món ăn tuyệt vời mỗi ngày!";
     } else {
-      botResponse = " Bạn vui lòng chờ phản hôi. cảm ơn !";
+      botResponse = " Bạn vui lòng chờ phản hoi. cảm ơn !";
     }
 
     // Gửi phản hồi tự động từ bot
     await _messagesCollection.add({
       'text': botResponse,
-      'sender': "Bot",  // Tin nhắn phản hồi từ bot
+      'sender': "Bot", // Tin nhắn phản hồi từ bot
       'recipient': _userName, // Gửi phản hồi từ bot đến người dùng
       'timestamp': FieldValue.serverTimestamp(),
     });

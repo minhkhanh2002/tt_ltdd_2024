@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:my_flutter_app/pages/forgotpassword.dart';
 import 'package:my_flutter_app/pages/signup.dart';
 import 'package:my_flutter_app/widget/widget_support.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'bottomnav.dart';
 
@@ -15,11 +14,10 @@ class LogIn extends StatefulWidget {
 }
 
 class _LogInState extends State<LogIn> {
-
-  String email="", password="";
-  final _formkey= GlobalKey<FormState>();
-  TextEditingController useremailcontroller= new TextEditingController();
-  TextEditingController userpasswordcontroller= new TextEditingController();
+  String email = "", password = "";
+  final _formkey = GlobalKey<FormState>();
+  TextEditingController useremailcontroller = new TextEditingController();
+  TextEditingController userpasswordcontroller = new TextEditingController();
 
 // userLogin() async {
 //   try {
@@ -80,11 +78,15 @@ class _LogInState extends State<LogIn> {
 
   userLogin() async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
       // Nếu đăng nhập thành công, điều hướng đến BottomNav
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => BottomNav()),
+        MaterialPageRoute(
+            builder: (context) => BottomNav(
+                  selectedTabIndex: 0,
+                )),
       );
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -93,22 +95,23 @@ class _LogInState extends State<LogIn> {
           style: TextStyle(fontSize: 18.0, color: Colors.black),
         ),
       ));
-    }on FirebaseAuthException catch (e){
-      if (e.code=='user-not-found'){
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
-              "Không tìm thấy User",
-              style: TextStyle(fontSize: 18.0, color: Colors.black),
-            )));
-      } else if (e.code=='wrong-password'){
+          "Không tìm thấy User",
+          style: TextStyle(fontSize: 18.0, color: Colors.black),
+        )));
+      } else if (e.code == 'wrong-password') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
-              "Mật khẩu sai",
-              style: TextStyle(fontSize: 18.0, color: Colors.black),
-            )));
+          "Mật khẩu sai",
+          style: TextStyle(fontSize: 18.0, color: Colors.black),
+        )));
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,13 +126,13 @@ class _LogInState extends State<LogIn> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color.fromARGB(211, 10, 124, 0),
-                        Color.fromARGB(255, 197, 240, 197),
-                      ])),
+                    Color.fromARGB(211, 10, 124, 0),
+                    Color.fromARGB(255, 197, 240, 197),
+                  ])),
             ),
             Container(
               margin:
-              EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
+                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
               height: MediaQuery.of(context).size.height / 2,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
@@ -176,8 +179,8 @@ class _LogInState extends State<LogIn> {
                             ),
                             TextFormField(
                               controller: useremailcontroller,
-                              validator: (value){
-                                if(value==null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return 'Hãy nhập email của bạn';
                                 }
                                 return null;
@@ -192,8 +195,8 @@ class _LogInState extends State<LogIn> {
                             ),
                             TextFormField(
                               controller: userpasswordcontroller,
-                              validator: (value){
-                                if(value==null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return 'Hãy nhập mật khẩu của bạn';
                                 }
                                 return null;
@@ -208,8 +211,12 @@ class _LogInState extends State<LogIn> {
                               height: 20,
                             ),
                             GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>ForgotPassword()));
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ForgotPassword()));
                               },
                               child: Container(
                                 alignment: Alignment.topRight,
@@ -221,13 +228,12 @@ class _LogInState extends State<LogIn> {
                               height: 80,
                             ),
                             GestureDetector(
-                              onTap: (){
-                                if(_formkey.currentState!.validate()){
+                              onTap: () {
+                                if (_formkey.currentState!.validate()) {
                                   setState(() {
                                     email = useremailcontroller.text;
-                                    password =userpasswordcontroller.text;
+                                    password = userpasswordcontroller.text;
                                   });
-
                                 }
                                 userLogin();
                               },
@@ -242,12 +248,12 @@ class _LogInState extends State<LogIn> {
                                       borderRadius: BorderRadius.circular(20)),
                                   child: Center(
                                       child: Text(
-                                        "Đăng nhập",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'Poppins1',
-                                            fontWeight: FontWeight.bold),
-                                      )),
+                                    "Đăng nhập",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins1',
+                                        fontWeight: FontWeight.bold),
+                                  )),
                                 ),
                               ),
                             ),

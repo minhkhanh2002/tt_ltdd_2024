@@ -2,28 +2,17 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:my_flutter_app/admin/admin_login.dart';
-import 'package:my_flutter_app/admin/signup_admin.dart';
 import 'package:my_flutter_app/firebase_options.dart';
-import 'package:my_flutter_app/pages/bottomnav.dart';
-import 'package:my_flutter_app/pages/home.dart';
-import 'package:my_flutter_app/pages/login.dart';
 import 'package:my_flutter_app/pages/onboard.dart';
-import 'package:my_flutter_app/pages/order.dart';
 import 'package:my_flutter_app/widget/app_constant.dart';
 
-import 'admin/home_admin.dart';
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey = publishableKey;
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate(
-
     webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
-
     androidProvider: AndroidProvider.debug,
-
     appleProvider: AppleProvider.appAttest,
   );
   runApp(const MyApp());
@@ -31,7 +20,6 @@ void main() async{
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
 
   // This widget is the root of your application.
   @override
@@ -57,10 +45,10 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-       // home: const BottomNav());
-      // home: const HomeAdmin());
+        // home: const BottomNav());
+        //home: const HomeAdmin());
         //home: const Order());
-      //  home:  AdminRegister());
+        //home: AdminRegister());
         home: Onboard());
   }
 }

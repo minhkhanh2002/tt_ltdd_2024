@@ -1,12 +1,12 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_app/pages/home.dart';
 import 'package:my_flutter_app/pages/order.dart';
 import 'package:my_flutter_app/pages/profile.dart';
 import 'package:my_flutter_app/pages/wallet.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class BottomNav extends StatefulWidget {
-  const BottomNav({super.key});
+  const BottomNav({super.key, required int selectedTabIndex});
 
   @override
   State<BottomNav> createState() => _BottomNavState();
@@ -26,7 +26,7 @@ class _BottomNavState extends State<BottomNav> {
   void initState() {
     super.initState();
     homepage = const Home();
-    order = const Order();  // Initialize Order page
+    order = const Order(); // Initialize Order page
     profile = const Profile();
     wallet = const Wallet();
 
@@ -45,7 +45,7 @@ class _BottomNavState extends State<BottomNav> {
         animationDuration: const Duration(milliseconds: 500),
         onTap: (int index) {
           setState(() {
-            currentTabIndex = index;  // Update the selected index
+            currentTabIndex = index; // Update the selected index
             currentPage = pages[currentTabIndex]; // Change the page
           });
         },
@@ -55,7 +55,7 @@ class _BottomNavState extends State<BottomNav> {
             color: Colors.white,
           ),
           Icon(
-            Icons.shopping_bag_outlined,  // Shopping bag icon for order
+            Icons.shopping_bag_outlined, // Shopping bag icon for order
             color: Colors.white,
           ),
           Icon(

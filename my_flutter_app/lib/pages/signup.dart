@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_app/service/database.dart';
 import 'package:my_flutter_app/service/shared_pref.dart';
@@ -8,8 +7,7 @@ import 'package:random_string/random_string.dart';
 import '../widget/widget_support.dart';
 import 'bottomnav.dart';
 import 'login.dart';
-import 'package:my_flutter_app/pages/signup.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 //import 'package:my_flutter_app/pages/forgot_password.dart';
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -33,7 +31,6 @@ class _SignUpState extends State<SignUp> {
   registration() async {
     if (password != null) {
       try {
-
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 
@@ -43,8 +40,8 @@ class _SignUpState extends State<SignUp> {
               "Đăng ký thành công.",
               style: TextStyle(fontSize: 20.0),
             ))));
-        String Id= randomAlphaNumeric(10);
-        Map<String, dynamic> addUserInfo={
+        String Id = randomAlphaNumeric(10);
+        Map<String, dynamic> addUserInfo = {
           "Name": namecontroller.text,
           "Email": mailcontroller.text,
           "Wallet": "0",
@@ -56,11 +53,13 @@ class _SignUpState extends State<SignUp> {
         await SharedPreferenceHelper().saveUserWallet('0');
         await SharedPreferenceHelper().saveUserId(Id);
 
-
-
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>BottomNav()));
-
-      }on FirebaseException catch(e) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => BottomNav(
+                      selectedTabIndex: 0,
+                    )));
+      } on FirebaseException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: Colors.orangeAccent,
@@ -149,13 +148,13 @@ class _SignUpState extends State<SignUp> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFFff5c30),
-                        Color(0xFFe74b1a),
-                      ])),
+                    Color(0xFFff5c30),
+                    Color(0xFFe74b1a),
+                  ])),
             ),
             Container(
               margin:
-              EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
+                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
               height: MediaQuery.of(context).size.height / 2,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
@@ -171,10 +170,10 @@ class _SignUpState extends State<SignUp> {
                 children: [
                   Center(
                       child: Image.asset(
-                        "images/logo.png",
-                        width: MediaQuery.of(context).size.width / 1.5,
-                        fit: BoxFit.cover,
-                      )),
+                    "images/logo.png",
+                    width: MediaQuery.of(context).size.width / 1.5,
+                    fit: BoxFit.cover,
+                  )),
                   SizedBox(
                     height: 50.0,
                   ),
@@ -273,13 +272,13 @@ class _SignUpState extends State<SignUp> {
                                       borderRadius: BorderRadius.circular(20)),
                                   child: Center(
                                       child: Text(
-                                        "ĐĂNG KÝ NGAY",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18.0,
-                                            fontFamily: 'Poppins1',
-                                            fontWeight: FontWeight.bold),
-                                      )),
+                                    "ĐĂNG KÝ NGAY",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18.0,
+                                        fontFamily: 'Poppins1',
+                                        fontWeight: FontWeight.bold),
+                                  )),
                                 ),
                               ),
                             ),

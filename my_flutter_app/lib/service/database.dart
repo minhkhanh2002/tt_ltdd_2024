@@ -1,19 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 
-class DatabaseMethods{
-  Future addUserDetail(Map<String, dynamic> userInfoMap, String id) async{
-    return await FirebaseFirestore.instance.collection('USERS').doc(id).set(userInfoMap);
+class DatabaseMethods {
+  Future addUserDetail(Map<String, dynamic> userInfoMap, String id) async {
+    return await FirebaseFirestore.instance
+        .collection('USERS')
+        .doc(id)
+        .set(userInfoMap);
   }
 
-  UpdateUserWallet(String id, String amount) async{
-    return await FirebaseFirestore.instance.collection('USERS').doc(id).update({"Wallet": amount});
+  UpdateUserWallet(String id, String amount) async {
+    return await FirebaseFirestore.instance
+        .collection('USERS')
+        .doc(id)
+        .update({"Wallet": amount});
   }
 
   Future addFoodItem(Map<String, dynamic> foodItemData) async {
     // Thêm món ăn vào collection 'foodItems'
-    return await FirebaseFirestore.instance.collection('foodItems').add(foodItemData);
+    return await FirebaseFirestore.instance
+        .collection('foodItems')
+        .add(foodItemData);
   }
+
   // Thêm món ăn vào giỏ hàng của người dùng (collection 'userCart')
   Future addFoodToCart(Map<String, dynamic> foodItemData, String userId) async {
     try {
@@ -30,7 +38,6 @@ class DatabaseMethods{
     }
   }
 
-
   // Lấy giỏ hàng của người dùng (dùng khi hiển thị giỏ hàng)
   Future getUserCart(String userId) async {
     return FirebaseFirestore.instance
@@ -38,5 +45,22 @@ class DatabaseMethods{
         .doc(userId)
         .collection('items')
         .snapshots();
+  }
+
+  Future<void> updateCartItem({
+    required String userId,
+    required String docId,
+    required int newQuantity,
+    required int newTotal,
+  }) async {
+    await FirebaseFirestore.instance
+        .collection('cart')
+        .doc(userId)
+        .collection('items')
+        .doc(docId)
+        .update({
+      'Quantity': newQuantity.toString(),
+      'Total': newTotal.toString(),
+    });
   }
 }
