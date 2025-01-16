@@ -3,8 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:my_flutter_app/firebase_options.dart';
-import 'package:my_flutter_app/pages/onboard.dart';
 import 'package:my_flutter_app/widget/app_constant.dart';
+
+import 'admin/home_admin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,10 +47,11 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         // home: const BottomNav());
-        //home: const HomeAdmin());
-        //home: const Order());
-        //home: AdminRegister());
-        home: Onboard());
+        home: const HomeAdmin());
+    //home: const Order());
+    //home: AdminRegister());
+    //home: OrderManager());
+    //home: Onboard());
   }
 }
 

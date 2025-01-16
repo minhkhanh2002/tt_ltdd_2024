@@ -38,6 +38,16 @@ class DatabaseMethods {
     }
   }
 
+  //lưu thông tin đặt hàng
+  Future<void> addOrder(Map<String, dynamic> orderData) async {
+    try {
+      await FirebaseFirestore.instance.collection('orders').add(orderData);
+      print("Order added successfully!");
+    } catch (e) {
+      print("Error adding order: $e");
+    }
+  }
+
   // Lấy giỏ hàng của người dùng (dùng khi hiển thị giỏ hàng)
   Future getUserCart(String userId) async {
     return FirebaseFirestore.instance
